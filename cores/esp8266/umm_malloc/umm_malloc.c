@@ -1202,7 +1202,11 @@ static unsigned short int umm_assimilate_down( unsigned short int c, unsigned sh
 }
 
 /* ------------------------------------------------------------------------- */
-
+// Will be called by one of the allocs() during system startup when the OS
+// attempts to malloc() something but after flash is enabled.  No need to keep
+// in IRAM.  This section may need to be removed if the core SDK starts using
+// malloc() before flash is enabled.
+extern void umm_init( void ) __attribute__((section(".irom0.text.umm_init")));
 void umm_init( void ) {
   /* init heap pointer and size, and memset it to 0 */
   umm_heap = (umm_block *)UMM_MALLOC_CFG__HEAP_ADDR;
