@@ -51,7 +51,7 @@ extern void __analogWrite(uint8_t pin, int val) {
   if (pin > 16) {
     return;
   }
-  uint32_t analogPeriod = (1000000L * system_get_cpu_freq()) / analogFreq;
+  uint32_t analogPeriod = microsecondsToClockCycles(1000000UL) / analogFreq;
   if (val < 0) {
     val = 0;
   } else if (val > analogScale) {
@@ -63,13 +63,11 @@ extern void __analogWrite(uint8_t pin, int val) {
   uint32_t low = analogPeriod - high;
   pinMode(pin, OUTPUT);
   if (low == 0) {
-    stopWaveform(pin);
     digitalWrite(pin, HIGH);
   } else if (high == 0) {
-    stopWaveform(pin);
     digitalWrite(pin, LOW);
   } else {
-    if (startWaveformCycles(pin, high, low, 0)) {
+    if (startWaveformClockCycles(pin, high, low, 0)) {
       analogMap |= (1 << pin);
     }
   }
