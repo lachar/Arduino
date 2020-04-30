@@ -597,7 +597,7 @@ bool MDNSResponder::stcMDNSServiceTxts::compare(const MDNSResponder::stcMDNSServ
 
     bool    bResult = false;
 
-    if ((bResult = (length() == p_Other.length())))
+    if ((m_pTxts != nullptr) && (bResult = (length() == p_Other.length())))
     {
         // Compare A->B
         for (const stcMDNSServiceTxt* pTxt = m_pTxts; ((bResult) && (pTxt)); pTxt = pTxt->m_pNext)
