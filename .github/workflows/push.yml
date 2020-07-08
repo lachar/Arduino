@@ -24,6 +24,12 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+    - name: Cache linux toolchain
+      id: cache-linux
+      uses: actions/cache@v2
+      with:
+        path: ./tools/dist
+        key: key-linux-toolchain
     - name: Build Sketches
       run: |
         TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE BUILD_PARITY=custom mod=8 rem=${{ matrix.mod }} bash ./tests/build.sh
@@ -36,7 +42,6 @@ jobs:
     strategy:
       matrix:
         mod: [0, 1, 2, 3, 4, 5, 6, 7]
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -44,6 +49,12 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+    - name: Cache linux toolchain
+      id: cache-linux
+      uses: actions/cache@v2
+      with:
+        path: ./tools/dist
+        key: key-linux-toolchain
     - name: Build Sketches
       run: |
         TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE BUILD_PARITY=custom mod=8 rem=${{ matrix.mod }} bash ./tests/debug6.sh
