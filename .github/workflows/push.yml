@@ -16,7 +16,6 @@ jobs:
     strategy:
       matrix:
         mod: [0, 1, 2, 3, 4, 5, 6, 7]
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -24,7 +23,7 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: Cache linux toolchain
+    - name: Cache Linux toolchain
       id: cache-linux
       uses: actions/cache@v2
       with:
@@ -49,7 +48,7 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: Cache linux toolchain
+    - name: Cache Linux toolchain
       id: cache-linux
       uses: actions/cache@v2
       with:
@@ -64,7 +63,6 @@ jobs:
   build-windows:
     name: Windows
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -72,7 +70,13 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: Build Sketches
+    - name: Cache Windows toolchain
+      id: cache-windows
+      uses: actions/cache@v2
+      with:
+        path: ./tools/dist
+        key: key-windows-toolchain
+    - name: Build Sketch
       run: |
         copy (get-command python).source (get-command python).source.Replace("python.exe", "python3.exe")
         $env:TRAVIS_BUILD_DIR=$env:GITHUB_WORKSPACE
@@ -87,7 +91,6 @@ jobs:
   build-mac:
     name: Mac
     runs-on: macOS-latest
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -95,7 +98,13 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: Build Sketches
+    - name: Cache Mac toolchain
+      id: cache-mac
+      uses: actions/cache@v2
+      with:
+        path: ./tools/dist
+        key: key-mac-toolchain
+    - name: Build Sketch
       run: |
         TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE MACOSX=1 BUILD_PARITY=custom mod=500 rem=1 bash ./tests/build.sh
 
