@@ -5,6 +5,7 @@ on:
     tags:
 
 jobs:
+
   package:
     name: Package
     runs-on: ubuntu-latest
@@ -22,7 +23,7 @@ jobs:
         CI_GITHUB_API_KEY: ${{ secrets.GITHUB_TOKEN }}
         TRAVIS_TAG: ${{ github.ref }}
       run: |
-           ./tests/ci/build_package.sh
+           bash ./tests/ci/build_package.sh
     - name: Create release
       id: create-release
       uses: actions/create-release@v1
