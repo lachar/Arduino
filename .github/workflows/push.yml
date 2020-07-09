@@ -1,21 +1,17 @@
 name: ESP8266 Arduino CI
 
 on:
-  push:
-    branches:
-    - master
-    - release/*
   pull_request:
+
 
 jobs:
 
-  # Normal builds
   build-linux:
     name: Build ${{ matrix.mod }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mod: [0, 1, 2, 3, 4, 5, 6, 7]
+        mod: [0] #[0, 1, 2, 3, 4, 5, 6, 7]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -34,13 +30,12 @@ jobs:
         TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE BUILD_PARITY=custom mod=8 rem=${{ matrix.mod }} bash ./tests/build.sh
 
 
-  # Enable IPv6 and DEBUG
   build-debug-ipv6:
     name: Debug IPv6 ${{ matrix.mod }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mod: [0, 1, 2, 3, 4, 5, 6, 7]
+        mod: [0] # [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -59,7 +54,6 @@ jobs:
         TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE BUILD_PARITY=custom mod=8 rem=${{ matrix.mod }} bash ./tests/debug6.sh
 
 
-  # Windows
   build-windows:
     name: Windows
     runs-on: windows-latest
@@ -87,7 +81,6 @@ jobs:
         bash ./tests/build.sh
 
 
-  # Mac
   build-mac:
     name: Mac
     runs-on: macOS-latest
@@ -109,7 +102,6 @@ jobs:
         TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE MACOSX=1 BUILD_PARITY=custom mod=500 rem=1 bash ./tests/build.sh
 
 
-  # Platform.IO quick builds
   build-pio:
     name: Build Platform.IO
     runs-on: ubuntu-latest
@@ -204,3 +196,56 @@ jobs:
     - name: Boards.txt diff
       run: |
           TRAVIS_BUILD_DIR=$GITHUB_WORKSPACE ./tests/ci/build_boards.sh
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Build package JSON
+      env:
+        TRAVIS_BUILD_DIR: ${{ github.workspace }}
+        BUILD_TYPE: package
+        CI_GITHUB_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+        TRAVIS_TAG: ${{ github.ref }}
+      run: |
+           ./tests/ci/build_package.sh
+    - name: Create release
+      id: create-release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: true
+        prerelease: true
+    - name: Upload ZIP file
+      id: upload-release-asset-zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: package/versions/${{ github.ref }}/esp8266-${{ github.ref }}.zip
+        asset_name: esp8266-${{ github.ref }}.zip
+        asset_content_type: application/zip
+    - name: Upload JSON
+      id: upload-release-asset-json
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: package/versions/${{ github.ref }}/package_esp8266com_index.json
+        asset_name: package_esp8266com_index.json
+        asset_content_type: application/json
