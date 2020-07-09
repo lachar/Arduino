@@ -1,3 +1,6 @@
+# Run whenever a PR is generated or updated.  Do the normal suite of tests
+# and report success/fail in the PR.
+
 name: ESP8266 Arduino CI
 
 on:

@@ -1,4 +1,8 @@
-name: ESP8266 Arduino Release
+# Whenever a tag of the form #.xxxx is pushed against master, generate a
+# draft release and upload the ZIP and JSON file to it.  Maintainers then
+# will manually add the changelist and publish it.
+
+name: ESP8266 Arduino Draft Release
 
 on:
   push:
