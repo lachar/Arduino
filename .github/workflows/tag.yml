@@ -24,37 +24,4 @@ jobs:
       run: |
            export TRAVIS_TAG=$(git describe --exact-match --tags)
            bash ./tests/ci/build_package.sh
-    - name: Create release
-      id: create-release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          Changes in this Release
-          - First Change
-          - Second Change
-        draft: true
-        prerelease: true
-    - name: Upload ZIP file
-      id: upload-release-asset-zip
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: package/versions/${{ github.ref }}/esp8266-${{ github.ref }}.zip
-        asset_name: esp8266-${{ github.ref }}.zip
-        asset_content_type: application/zip
-    - name: Upload JSON
-      id: upload-release-asset-json
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: package/versions/${{ github.ref }}/package_esp8266com_index.json
-        asset_name: package_esp8266com_index.json
-        asset_content_type: application/json
+           bash -c 'if [ "$TRAVIS_TAG" != "" ]; then pip3 install PyGithub && python3 ./package/upload_release.py --user $GITHUB_ACTOR --repo $GITHUB_REPOSITORY --token $CI_GITHUB_API_KEY --tag $TRAVIS_TAG --name "Release $TRAVIS_TAG" --msg "Text goes here" package/*.zip package/package_esp8266com_index.json; fi'
