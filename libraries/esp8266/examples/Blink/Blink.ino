@@ -9,7 +9,10 @@
   Note that this sketch uses LED_BUILTIN to find the pin with the internal LED
 */
 
-void setup() {
+void setup()
+
+ {
+if(1==1)
   pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
 }
 

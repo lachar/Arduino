@@ -135,6 +135,9 @@ String checkForUnsupportedPath(String filename) {
 }
 #endif
 
+#if defined(__x86_64__)
+  #error Check mock fail
+#endif
 
 ////////////////////////////////
 // Request handlers

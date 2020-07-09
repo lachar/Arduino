@@ -86,7 +86,7 @@ TEST_CASE("LittleFS checks the config object passed in", "[fs]")
     SPIFFSConfig s;
     SDFSConfig d;
     LittleFSConfig l;
-
+    REQUIRE(0);
     REQUIRE_FALSE(LittleFS.setConfig(f));
     REQUIRE_FALSE(LittleFS.setConfig(s));
     REQUIRE_FALSE(LittleFS.setConfig(d));

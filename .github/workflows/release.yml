@@ -1,7 +1,9 @@
 name: ESP8266 Arduino Release
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
 
@@ -24,4 +26,4 @@ jobs:
            export TRAVIS_TAG=$(git describe --exact-match --tags)
            bash ./tests/ci/build_package.sh
            pip3 install PyGithub
-           python3 ./package/upload_release.py --user $GITHUB_ACTOR --repo $GITHUB_REPOSITORY --token $CI_GITHUB_API_KEY --tag $TRAVIS_TAG --name "Release $TRAVIS_TAG" --msg "Text goes here" package/*.zip package/package_esp8266com_index.json
+           python3 ./package/upload_release.py --user "$GITHUB_ACTOR" --repo "$GITHUB_REPOSITORY" --token "$CI_GITHUB_API_KEY" --tag "$TRAVIS_TAG" --name "Release $TRAVIS_TAG" --msg "Text goes here" package/*.zip package/package_esp8266com_index.json
