@@ -21,8 +21,8 @@ jobs:
         TRAVIS_BUILD_DIR: ${{ github.workspace }}
         BUILD_TYPE: package
         CI_GITHUB_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-        TRAVIS_TAG: ${{ github.ref }}
       run: |
+           export TRAVIS_TAG=$(git describe --exact-match --tags)
            bash ./tests/ci/build_package.sh
     - name: Create release
       id: create-release
