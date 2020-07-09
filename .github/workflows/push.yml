@@ -126,7 +126,6 @@ jobs:
   build-pio:
     name: Build Platform.IO
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -200,8 +199,10 @@ jobs:
         TRAVIS_BUILD_DIR: ${{ github.workspace }}
         TRAVIS_TAG: ${{ github.ref }}
       run: |
-          sudo bash ./tests/ci/install_astyle.sh
-          PATH=/home/runner/bin:$PATH bash ./tests/ci/style_check.sh
+          sudo apt-get install astyle
+          astyle --version
+          # sudo bash ./tests/ci/install_astyle.sh
+          bash ./tests/ci/style_check.sh
 
 
   mock-check:
@@ -239,3 +240,22 @@ jobs:
       run: |
           bash ./tests/ci/build_boards.sh
 
+
+  # Expect this to complete but never upload anything to a release.  That will only be done
+  # on a push of a tag by a separate YAML job.
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Build package JSON
+      env:
+        TRAVIS_BUILD_DIR: ${{ github.workspace }}
+        BUILD_TYPE: package
+      run: |
+           bash ./tests/ci/build_package.sh
