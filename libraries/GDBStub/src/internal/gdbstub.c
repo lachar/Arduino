@@ -68,7 +68,7 @@ the xthal stack frame struct.
 */
 #include "osapi.h"
 
-void _xtos_set_exception_handler(int cause, void (exhandler)(struct XTensa_exception_frame_s *frame));
+extern void _xtos_set_exception_handler(uint32_t reason, void (*fn)(struct __exception_frame *ef, uint32_t cause));
 
 #endif
 
